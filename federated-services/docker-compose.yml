@@ -1,0 +1,33 @@
+version: '3.9'
+services:
+  fed-service-a:
+    image: node:14-alpine
+    networks:
+      - federated-services-network
+    container_name: fed-service-a
+    command: "node /app/index.js"
+    restart: on-failure
+    ports:
+      - "6101:6101"
+    environment:
+      SCHEMA_REGISTRY_URL: "http://schema-registry:3000"
+    volumes:
+      - ./service-a:/app
+  fed-service-b:
+    image: node:14-alpine
+    networks:
+      - federated-services-network
+    container_name: fed-service-b
+    command: "node /app/index.js"
+    restart: on-failure
+    ports:
+      - "6102:6102"
+    environment:
+      SCHEMA_REGISTRY_URL: "http://schema-registry:3000"
+    volumes:
+      - ./service-b:/app
+
+networks:
+  federated-services-network:
+    external:
+      name: graphql-federation-network
