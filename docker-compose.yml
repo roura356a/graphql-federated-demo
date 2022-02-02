@@ -1,0 +1,75 @@
+version: '3.9'
+services:
+  registry-mysql:
+    image: mysql:8
+    networks:
+      - schema-registry
+    container_name: registry-mysql
+    restart: on-failure
+    volumes:
+      - ./mysql-data:/var/lib/mysqlq
+    environment:
+      MYSQL_ROOT_PASSWORD: GqL456kp7f
+      MYSQL_DATABASE: schema-registry
+  registry-redis:
+    image: redis:6
+    networks:
+      - schema-registry
+    container_name: registry-redis
+    restart: on-failure
+  registry:
+    image: pipedrive/graphql-schema-registry:latest
+    networks:
+      - schema-registry
+    container_name: registry
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: registry-mysql
+      DB_USERNAME: root
+      DB_SECRET: GqL456kp7f
+      DB_NAME: schema-registry
+      REDIS_HOST: registry-redis
+      ASSETS_URL: "."
+  graphql-gateway:
+    image: node:14-alpine
+    networks:
+      - schema-registry
+    container_name: graphql-gateway
+    command: "node /index.js"
+    restart: on-failure
+    ports:
+      - "6100:6100"
+    volumes:
+      - ./graphql-gateway:/
+  fed-service-a:
+    image: node:14-alpine
+    networks:
+      - schema-registry
+    container_name: fed-service-a
+    command: "node /index.js"
+    restart: on-failure
+    ports:
+      - "6101:6101"
+    volumes:
+      - ./service-a:/
+    depends_on:
+      - graphql-gateway
+  fed-service-b:
+    image: node:14-alpine
+    networks:
+      - schema-registry
+    container_name: fed-service-b
+    command: "node /index.js"
+    restart: on-failure
+    ports:
+      - "6102:6102"
+    volumes:
+      - ./service-b:/
+    depends_on:
+      - graphql-gateway
+
+networks:
+  schema-registry:
+    driver: bridge
