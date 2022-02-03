@@ -1,5 +1,5 @@
 {
-  "name": "federated_service_b",
+  "name": "federated_service_a",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,9 +9,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@apollo/federation": "^0.20.0",
+    "apollo-server": "^2.17.0",
+    "apollo-server-express": "^2.17.0",
     "express": "^4.17.1",
     "express-graphql": "^0.11.0",
-    "graphql": "^15.3.0",
+    "graphql": "15.0.0",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9"
   }

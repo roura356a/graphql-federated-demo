@@ -12,7 +12,7 @@ const {ApolloServerBase} = require('apollo-server-core');
 const CustomGateway = require('./custom-gateway');
 const RemoteGraphQLDataSource = require('./remote-data-source');
 
-const graphPort = 6100;
+const graphPort = 3000;
 
 app.use(router);
 router.use(json());

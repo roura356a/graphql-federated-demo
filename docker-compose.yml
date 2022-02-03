@@ -40,7 +40,7 @@ services:
     command: "node /app/index.js"
     restart: on-failure
     ports:
-      - "6100:6100"
+      - "6100:3000"
     environment:
       SCHEMA_REGISTRY_URL: "http://schema-registry:3000"
     volumes:

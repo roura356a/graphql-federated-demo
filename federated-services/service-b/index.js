@@ -1,37 +1,38 @@
-const express = require('express');
-const {graphqlHTTP} = require('express-graphql');
-const {buildSchema, printSchema} = require('graphql');
 const request = require('request-promise-native');
+const {buildFederatedSchema} = require('@apollo/federation');
+const {ApolloServer, gql} = require('apollo-server-express');
+const express = require('express');
+const app = express();
+const {json} = require('body-parser');
 
-const schema = buildSchema(`
-  type Query {
-    world: String
-	hola: String
-  }
-`);
+const typeDefs = gql`
+	type Query {
+		hola: String
+		world: String
+	}
+`;
 
-const root = {
-    world: () => {
-        return 'World!';
-    },
-    hola: () => 'Hola!',
+typeDefs.toString = function () {
+    return this.loc.source.body;
 };
 
-const graphPort = 6102;
+const resolvers = {
+    Query: {
+        hola: () => 'Hola!',
+        world: () => 'World!',
+    },
+};
 
-const app = express();
-app.use(
-    '/graphql',
-    graphqlHTTP({
-        schema: schema,
-        rootValue: root,
-        graphiql: true,
-    })
-);
+const server = new ApolloServer({schema: buildFederatedSchema([{typeDefs, resolvers}])});
 
-app.listen({port: graphPort}, () => {
-    console.log(`🚀 Server ready at http://localhost:${graphPort}`);
-});
+const graphPort = 3000;
+
+const router = express.Router();
+app.use(router);
+router.use(json());
+server.applyMiddleware({app});
+
+app.listen({port: graphPort}, () => {console.log(`🚀 Server ready at http://localhost:${graphPort}`);});
 
 (async () => {
     try {
@@ -42,10 +43,10 @@ app.listen({port: graphPort}, () => {
             method: 'POST',
             json: true,
             body: {
-                name: 'service_b',
+                name: process.env.SERVICE_NAME,
                 version: 'latest',
-                type_defs: printSchema(schema),
-                url: `http://fed-service-b:${graphPort}`,
+                type_defs: typeDefs.toString(),
+                url: `${process.env.SERVICE_HOST}:${graphPort}`,
             },
         });
         console.info('Schema registered successfully!');

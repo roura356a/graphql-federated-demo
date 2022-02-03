@@ -8,9 +8,11 @@ services:
     command: "node /app/index.js"
     restart: on-failure
     ports:
-      - "6101:6101"
+      - "6101:3000"
     environment:
       SCHEMA_REGISTRY_URL: "http://schema-registry:3000"
+      SERVICE_NAME: "service_a"
+      SERVICE_HOST: "http://fed-service-a"
     volumes:
       - ./service-a:/app
   fed-service-b:
@@ -21,9 +23,11 @@ services:
     command: "node /app/index.js"
     restart: on-failure
     ports:
-      - "6102:6102"
+      - "6102:3000"
     environment:
       SCHEMA_REGISTRY_URL: "http://schema-registry:3000"
+      SERVICE_NAME: "service_b"
+      SERVICE_HOST: "http://fed-service-b"
     volumes:
       - ./service-b:/app
 
