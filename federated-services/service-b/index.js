@@ -26,13 +26,14 @@ const resolvers = {
 const server = new ApolloServer({schema: buildFederatedSchema([{typeDefs, resolvers}])});
 
 const graphPort = 3000;
+const serviceUrl = `${process.env.SERVICE_HOST}:${graphPort}`;
 
 const router = express.Router();
 app.use(router);
 router.use(json());
 server.applyMiddleware({app});
 
-app.listen({port: graphPort}, () => {console.log(`🚀 Server ready at http://localhost:${graphPort}`);});
+app.listen({port: graphPort}, () => {console.log(`🚀 Server ready at ${serviceUrl}`);});
 
 (async () => {
     try {
@@ -46,7 +47,7 @@ app.listen({port: graphPort}, () => {console.log(`🚀 Server ready at http://lo
                 name: process.env.SERVICE_NAME,
                 version: 'latest',
                 type_defs: typeDefs.toString(),
-                url: `${process.env.SERVICE_HOST}:${graphPort}`,
+                url: serviceUrl,
             },
         });
         console.info('Schema registered successfully!');

@@ -10,7 +10,7 @@ using the official Docker Image `pipedrive/graphql-schema-registry`.
 
 ## Setup
 
-1. Go into the `/graphql-gateway` folder and run `npm install`.
+1. Go into the `/graphql-gateway` folder, run `nvm use` & `npm install`.
 1. In the root directory, run `docker-compose up -d` and wait until you can see
    the [Registry's UI](http://localhost:3000/).
 1. Go into the federated services folders (`/federated-services/service-a` & `/federated-services/service-b`) and
